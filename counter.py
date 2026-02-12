@@ -19,8 +19,8 @@ while True:
     r = model(frame)[0]
 
     # bottle class_id=39
-    count = sum(int(b.cls[0]) == 39 for b in r.boxes)
-    count1 = sum(int(b.cls[0]) == 67 for b in r.boxes)
+    count = sum(int(b.cls[0]) == 39 and float(b.conf[0]) > 0.7 for b in r.boxes)
+    count1 = sum(int(b.cls[0]) == 67 and float(b.conf[0]) > 0.7 for b in r.boxes)
 
     frame = r.plot()
     cv2.putText(frame, f'Bottle Count: {count}', (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)

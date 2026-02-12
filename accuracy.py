@@ -4,22 +4,21 @@ import cv2
 model = YOLO('yolov8n.pt')
 cap = cv2.VideoCapture(0)
 
-conf_threshold = 0.70 # confidence threshold
+conf_threshold = 0.70 
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
 
-    r = model(frame, conf=0.7)[0]   # get detection result
+    r = model(frame, conf=0.7)[0]
     cellphone_count = 0
 
-    # count person with confidence > 0.7
     for b in r.boxes:
-        cls_id = int(b.cls[0])  # check if class_id is 67 (cellphone)
+        cls_id = int(b.cls[0])
         conf = float(b.conf[0])
 
-        if cls_id == 67 and conf > conf_threshold:  # cellphone class
+        if cls_id == 67 and conf > conf_threshold:
             cellphone_count += 1
 
     annotated_frame = r.plot()
