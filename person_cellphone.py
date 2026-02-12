@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-import cv2, os
+import cv2, os, requests
 from datetime import datetime
 
 model = YOLO('yolov8n.pt')
@@ -25,10 +25,10 @@ while True:
             class_id = int(b.cls[0])
             confidence = float(b.conf[0])
 
-            if class_id == 0 and confidence > 0.7:   # Person
+            if class_id == 0 and confidence > 0.7:
                 person_count += 1
 
-            if class_id == 67 and confidence > 0.7:  # Cell phone
+            if class_id == 67 and confidence > 0.7:
                 phone_detected = True
 
     frame = r.plot()
