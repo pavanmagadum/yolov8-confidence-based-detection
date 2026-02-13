@@ -9,16 +9,16 @@ os.makedirs('snapshots', exist_ok=True)
 last_save=0
 last_firebase_update=0
 
-def send_to_firebase(person_detected):
+def send_to_firebase(bottle_detected):
     try:
         data={
-            'person_detected': 1 if person_detected else 0,
+            'bottle_detected': 1 if bottle_detected else 0,
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'person_count': person_count
+            'bottle_count': bottle_count
             }
-        response = requests.put(f"{FIREBASE_URL}/person_detection.json", json=data)
+        response = requests.put(f"{FIREBASE_URL}/bottle_detection.json", json=data)
         if response.status_code == 200:
-            print(f"Firebase updated: person_detected = {1 if person_detected else 0}")
+            print(f"Firebase updated: bottle_detected = {1 if bottle_detected else 0}")
         else:
             print(f"Firebase error{response.status_code}")
     except Exception as e:
@@ -30,23 +30,23 @@ while True:
         break
 
     r = model(frame)[0]
-    person_count = sum(int(b.cls[0]) == 0  for b in r.boxes)  # person class_id=0
+    bottle_count = sum(int(b.cls[0]) == 39  for b in r.boxes)  # bottle class_id=39
     frame = r.plot()
-    cv2.putText(frame, f'Persons: {person_count}', (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+    cv2.putText(frame, f'Bottles: {bottle_count}', (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
-    if person_count > 0 and (datetime.now().timestamp() - last_firebase_update) >= 5: 
-        send_to_firebase(person_count > 0)
+    if bottle_count > 0 and (datetime.now().timestamp() - last_firebase_update) >= 5: 
+        send_to_firebase(bottle_count > 0)
         last_firebase_update = datetime.now().timestamp()
     
-    if person_count > 0 and (datetime.now().timestamp() - last_save) >= 50:  # Save snapshot every 3 seconds
+    if bottle_count > 0 and (datetime.now().timestamp() - last_save) >= 50:  # Save snapshot every 3 seconds
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         cv2.rectangle(frame,(0,0),(450,60),(255,0,0),2)
-        cv2.putText(frame,f"{timestamp} | Persons: {person_count}",(30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+        cv2.putText(frame,f"{timestamp} | Bottles: {bottle_count}",(30,110),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
         cv2.imwrite(f'snapshots/snapshot_{timestamp}.jpg', frame)
         print(f"Saved snapshot")
         last_save = datetime.now().timestamp()
 
-    cv2.imshow('Person Detection', frame)
+    cv2.imshow('Bottle Detection', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 send_to_firebase(False)
