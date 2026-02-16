@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 import cv2
 
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8n.pt')# you only look once model for object detection
 cap = cv2.VideoCapture(0)
 
 conf_threshold = 0.70 
