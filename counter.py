@@ -1,9 +1,11 @@
 from ultralytics import YOLO
 import cv2
-
+# full form of YOLO is you only look once
 model=YOLO('yolov8n.pt')
 
 cap=cv2.VideoCapture(0)
+
+#This code is for smoll screen
 """cv2.namedWindow('YOLOv8 Detection', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty(
     'YOLOv8 Detection',
